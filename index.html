@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Hours Calculator - VT</title>
+</head>
+<body>
+    <header>
+        <h1>Hours Calculator</h1>
+    </header>
+    <div class="container">
+        <form id="time-calculator">
+            <div class="time-input">
+                <label for="start-hour">Start Time:</label>
+                <input type="number" id="start-hour" placeholder="HH" min="1" max="12" required>
+                <span>:</span>
+                <input type="number" id="start-minute" placeholder="MM" min="0" max="59" required>
+                <select id="start-am-pm" required>
+                    <option value="AM">AM</option>
+                    <option value="PM">PM</option>
+                </select>
+            </div>
+            <div class="time-input">
+                <label for="end-hour">End Time:</label>
+                <input type="number" id="end-hour" placeholder="HH" min="1" max="12" required>
+                <span>:</span>
+                <input type="number" id="end-minute" placeholder="MM" min="0" max="59" required>
+                <select id="end-am-pm" required>
+                    <option value="AM">AM</option>
+                    <option value="PM">PM</option>
+                </select>
+            </div>
+            <button id="calculate">Calculate</button>
+        </form>
+        <div class="result">
+            <p id="total-hours">Total Hours: 0 hours 0 mins</p>
+            <p id="current-time">Current Time: <span id="digital-clock">00:00 AM</span></p>
+        </div>
+    </div>
+    <footer>
+        <p>&copy; Hours Calculator by <a href="https://www.linkedin.com/in/vrajesh-thaker-1886731bb/">Vrajesh</a></p>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>
