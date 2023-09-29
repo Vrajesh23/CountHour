@@ -3,8 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <title>Hours Calculator - VT</title>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            padding: 0;
+            background-color: #001A26;
+            color: #ffffff;
+        }
+
+        /* Header */
+        header {
+            background-color: #053752;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .time-input {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .time-input label {
+            flex: 1;
+            font-weight: bold;
+        }
+
+        .time-input input[type="number"],
+        .time-input select {
+            flex: 1;
+            padding: 8px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .time-input select {
+            margin-left: 50px;
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            background-color: #EF810E;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #E6DE44;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #1d91cf;
+            border-radius: 5px;
+            color: #fff;
+        }
+
+        .result h2 {
+            margin-top: 0;
+            font-size: 22px;
+        }
+
+        .result p {
+            margin-bottom: 10px;
+        }
+
+        /* Footer */
+        footer {
+            color: #ffffff;
+            padding: 10px;
+            text-align: center;
+        }
+    </style>
+    <title>Hours Calculator</title>
 </head>
 <body>
     <header>
@@ -35,13 +131,122 @@
             <button id="calculate">Calculate</button>
         </form>
         <div class="result">
-            <p id="total-hours">Total Hours: 0 hours 0 mins</p>
+<h2 id="total-hours">Hour Calculation</h2>
             <p id="current-time">Current Time: <span id="digital-clock">00:00 AM</span></p>
+        </div>
+        <div id="total-hours-history">
+            <!-- History of calculated hours will appear here -->
         </div>
     </div>
     <footer>
         <p>&copy; Hours Calculator by <a href="https://www.linkedin.com/in/vrajesh-thaker-1886731bb/">Vrajesh</a></p>
     </footer>
-    <script src="script.js"></script>
+    <script>
+        // JavaScript code goes here
+        document.addEventListener('DOMContentLoaded', function () {
+            const startTimeInput = document.getElementById('start-hour');
+            const startMinuteInput = document.getElementById('start-minute');
+            const startTimeAmPmSelect = document.getElementById('start-am-pm');
+            const endTimeInput = document.getElementById('end-hour');
+            const endMinuteInput = document.getElementById('end-minute');
+            const endTimeAmPmSelect = document.getElementById('end-am-pm');
+            const calculateButton = document.getElementById('calculate');
+            const totalHoursElement = document.getElementById('total-hours');
+            const totalHoursHistoryElement = document.getElementById('total-hours-history');
+            const digitalClockElement = document.getElementById('digital-clock');
+    
+            function updateDigitalClock() {
+                const now = new Date();
+                let hours = now.getHours();
+                const minutes = now.getMinutes();
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12 || 12; // Convert to 12-hour format
+    
+                const timeString = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')} ${ampm}`;
+                digitalClockElement.textContent = timeString;
+            }
+    
+            function restrictToTwoDigits(inputElement) {
+                const inputValue = inputElement.value;
+                if (inputValue.length > 2) {
+                    inputElement.value = inputValue.slice(0, 2); // Truncate to two digits
+                }
+            }
+    
+            // Add input event listeners to restrict input to two digits
+            startTimeInput.addEventListener('input', function () {
+                restrictToTwoDigits(startTimeInput);
+            });
+            startMinuteInput.addEventListener('input', function () {
+                restrictToTwoDigits(startMinuteInput);
+            });
+            endTimeInput.addEventListener('input', function () {
+                restrictToTwoDigits(endTimeInput);
+            });
+            endMinuteInput.addEventListener('input', function () {
+                restrictToTwoDigits(endMinuteInput);
+            });
+    
+            function calculateTime() {
+                const startHour = parseInt(startTimeInput.value);
+                const startMinute = parseInt(startMinuteInput.value);
+                const startAmPm = startTimeAmPmSelect.value;
+                const endHour = parseInt(endTimeInput.value);
+                const endMinute = parseInt(endMinuteInput.value);
+                const endAmPm = endTimeAmPmSelect.value;
+    
+                if (!isNaN(startHour) && !isNaN(startMinute) && !isNaN(endHour) && !isNaN(endMinute)) {
+                    let adjustedStartHour = startHour;
+                    let adjustedEndHour = endHour;
+    
+                    if (startAmPm === 'PM' && startHour !== 12) {
+                        adjustedStartHour += 12;
+                    }
+                    if (endAmPm === 'PM' && endHour !== 12) {
+                        adjustedEndHour += 12;
+                    }
+    
+                    const startMinutes = adjustedStartHour * 60 + startMinute;
+                    const endMinutes = adjustedEndHour * 60 + endMinute;
+    
+                    if (endMinutes >= startMinutes) {
+                        const totalMinutes = endMinutes - startMinutes;
+                        const totalHours = Math.floor(totalMinutes / 60);
+                        const totalMinutesDisplay = totalMinutes % 60;
+                        const totalTimeString = `${totalHours} hours ${totalMinutesDisplay} mins`;
+    
+                        totalHoursElement.textContent = `Total Hours: ${totalTimeString}`;
+    
+                        // Append the result to the history
+                        const resultItem = document.createElement('p');
+                        resultItem.textContent = `Result: ${totalTimeString}`;
+                        totalHoursHistoryElement.appendChild(resultItem);
+    
+                        // Display the result in a prompt dialog
+                        const resultPrompt = prompt('Result:', totalTimeString);
+                        if (resultPrompt === null) {
+                            // User canceled the prompt
+                            totalHoursElement.textContent = 'Total Hours: Calculation canceled';
+                        } else {
+                            totalHoursElement.textContent = 'Total Hours: Calculation saved';
+                        }
+                    } else {
+                        totalHoursElement.textContent = 'Total Hours: Invalid input';
+                        alert('End time must be greater than or equal to start time.');
+                    }
+                } else {
+                    totalHoursElement.textContent = 'Total Hours: Invalid input';
+                    alert('Invalid input. Please enter valid hours and minutes.');
+                }
+            }
+    
+            calculateButton.addEventListener('click', calculateTime);
+    
+            // Initial clock setup
+            updateDigitalClock();
+            setInterval(updateDigitalClock, 1000);
+        });
+    </script>
+    
 </body>
 </html>
